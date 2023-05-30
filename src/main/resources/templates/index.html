@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>위치 정보 전송</title>
+    <script>
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(sendLocationToServer);
+            } else {
+                console.log('연결 안됨. 위치 정보 제공 동의 필요');
+            }
+        }
+
+        function sendLocationToServer(position) {
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+
+            var form = document.getElementById('locationForm');
+            form.latitude.value = latitude;
+            form.longitude.value = longitude;
+            form.submit();
+        }
+    </script>
+</head>
+<body onload="getLocation()">
+<h1>위치 정보 전송</h1>
+<form id="locationForm" th:action="@{/location}" method="post">
+    <input type="hidden" name="latitude" th:value="${latitude}">
+    <input type="hidden" name="longitude" th:value="${longitude}">
+</form>
+</body>
+</html>
