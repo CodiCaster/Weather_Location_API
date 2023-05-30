@@ -27,7 +27,6 @@ import java.nio.file.Paths;
 @RequiredArgsConstructor
 public class ApiController {
     @Value("${resources.location}")
-
     private String resourceLocation;
 
     private final EntityManager em;

@@ -13,7 +13,6 @@ import java.io.IOException;
 @Controller
 public class LocationController {
 
-
     private final LocationService locationService;
     private double latitude;
     private double longitude;
@@ -56,7 +55,8 @@ public class LocationController {
         yLon = (int) convert.getyLon();
         weatherInfo = WeatherService.getApiWeather(xLat, yLon);
         region = locationService.getRegion(xLat, yLon);
-
+        //63, 90
+        //(latitude=35.8678275, longitude=127.1365699)
         return "redirect:/result";
     }
 }
