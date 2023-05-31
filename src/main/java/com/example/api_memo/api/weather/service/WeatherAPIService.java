@@ -15,16 +15,17 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Service
-public class WeatherService {
+public class WeatherAPIService {
 
     @Value("${api.weather.key}")
     private String REST_KEY;
+    private String temperatureMinumum;
+    private String temperatureMaximum;
 
-    public String[] getApiWeather(int xLan, int yLong) throws IOException {
+    public String[] getApiWeather(int xLan, int yLon) throws IOException {
         String[] bases = calcBaseDateAndTime();
         String baseDate = bases[0];
         String baseTime = bases[1];
-
 
         StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst"); /*URL*/
         urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + REST_KEY); /*Service Key*/
@@ -34,7 +35,7 @@ public class WeatherService {
         urlBuilder.append("&" + URLEncoder.encode("base_date", "UTF-8") + "=" + URLEncoder.encode(baseDate, "UTF-8")); /*‘XX년 X월 XX일발표*/
         urlBuilder.append("&" + URLEncoder.encode("base_time", "UTF-8") + "=" + URLEncoder.encode(baseTime, "UTF-8")); /*XX시 발표*/
         urlBuilder.append("&" + URLEncoder.encode("nx", "UTF-8") + "=" + URLEncoder.encode("" + xLan, "UTF-8")); /*예보지점의 X 좌표값*/
-        urlBuilder.append("&" + URLEncoder.encode("ny", "UTF-8") + "=" + URLEncoder.encode("" + yLong, "UTF-8")); /*예보지점의 Y 좌표값*/
+        urlBuilder.append("&" + URLEncoder.encode("ny", "UTF-8") + "=" + URLEncoder.encode("" + yLon, "UTF-8")); /*예보지점의 Y 좌표값*/
         URL url = new URL(urlBuilder.toString());
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
@@ -54,9 +55,6 @@ public class WeatherService {
         rd.close();
         conn.disconnect();
 
-        //rd를 그냥 아래에 넘겨봐 sb를 skip하고
-        String temperatureMinumum = "";
-        String temperatureMaximum = "";
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -85,8 +83,6 @@ public class WeatherService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        System.out.println("최저 기온 : " + temperatureMinumum);
-//        System.out.println("최고 기온 : " + temperatureMaximum);
         return new String[]{temperatureMinumum, temperatureMaximum};
     }
 

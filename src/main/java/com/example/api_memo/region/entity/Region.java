@@ -1,50 +1,15 @@
-package com.example.api_memo.service;
+package com.example.api_memo.region.entity;
 
-public class Convert {
+import com.example.api_memo.service.Convert;
+import lombok.Data;
 
+@Data
+public class Region {
     private double lat; //gps로 반환받은 위도
     private double lon; //gps로 반환받은 경도
-
     private double xLat; //x좌표로 변환된 위도
     private double yLon; //y좌표로 변환된 경도
 
-    public Convert(double lat, double lon) {
-        this.lat = lat;
-        this.lon = lon;
-    }
-
-
-    public double getLat() {
-        return lat;
-    }
-
-    public double getLon() {
-        return lon;
-    }
-
-    public double getxLat() {
-        return xLat;
-    }
-
-    public double getyLon() {
-        return yLon;
-    }
-
-    public void setLat(double lat) {
-        this.lat = lat;
-    }
-
-    public void setLon(double lon) {
-        this.lon = lon;
-    }
-
-    public void setxLat(double xLat) {
-        this.xLat = xLat;
-    }
-
-    public void setyLon(double yLon) {
-        this.yLon = yLon;
-    }
 
     //x,y좌표로 변환해주는것
     public void transfer(Convert gpt, int mode) {

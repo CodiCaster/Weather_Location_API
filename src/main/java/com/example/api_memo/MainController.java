@@ -3,7 +3,7 @@ package com.example.api_memo;
 import com.example.api_memo.api.kakao.service.KakaoAPIService;
 import com.example.api_memo.form.LocationForm;
 import com.example.api_memo.service.Convert;
-import com.example.api_memo.api.weather.service.WeatherService;
+import com.example.api_memo.api.weather.service.WeatherAPIService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +14,7 @@ import java.io.IOException;
 public class MainController {
 
     private final KakaoAPIService kakaoAPIService;
-    private final WeatherService weatherService;
+    private final WeatherAPIService weatherAPIService;
 
     private double latitude;
     private double longitude;
@@ -24,9 +24,9 @@ public class MainController {
     private String[] weatherInfo;
     private String region;
 
-    public MainController(KakaoAPIService kakaoAPIService, WeatherService weatherService) {
+    public MainController(KakaoAPIService kakaoAPIService, WeatherAPIService weatherAPIService) {
         this.kakaoAPIService = kakaoAPIService;
-        this.weatherService = weatherService;
+        this.weatherAPIService = weatherAPIService;
     }
 
     @GetMapping("/result")
@@ -51,7 +51,7 @@ public class MainController {
         convert.transfer(convert, 0);
         xLat = (int) convert.getxLat();
         yLon = (int) convert.getyLon();
-        weatherInfo = weatherService.getApiWeather(xLat, yLon);
+        weatherInfo = weatherAPIService.getApiWeather(xLat, yLon);
         region = kakaoAPIService.loadLocation(longitude, latitude);
         return "redirect:/result";
     }
