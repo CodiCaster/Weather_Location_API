@@ -29,4 +29,12 @@ public class Region {
         this.pointY = point.getY();
         this.address = address;
     }
+
+    public void update(Double latitude, Double longitude, Point point, String address) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.pointX = point.getX();
+        this.pointY = point.getY();
+        this.address = address;
+    }
 }

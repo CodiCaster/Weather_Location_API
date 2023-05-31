@@ -1,6 +1,6 @@
 package com.example.api_memo.region.controller;
 
-import com.example.api_memo.region.dto.LocationForm;
+import com.example.api_memo.region.dto.RegionDTO;
 import com.example.api_memo.region.service.RegionService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -27,11 +27,11 @@ public class RegionController {
 
     //위치 정보 갱신 버튼을 누르면 위치 갱신
     @PostMapping("/location")
-    public String getLocation(LocationForm locationForm) throws IOException {
-        if (locationForm.getLatitude().isEmpty()) {
+    public String getLocation(RegionDTO regionDTO) throws IOException {
+        if (regionDTO.getLatitude().isEmpty()) {
             return "여기는 에러";
         }
-        regionService.save(locationForm);
+        regionService.save(regionDTO);
 
         return "result.html";
     }

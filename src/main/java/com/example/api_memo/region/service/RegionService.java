@@ -1,14 +1,14 @@
 package com.example.api_memo.region.service;
 
 import com.example.api_memo.weather.service.WeatherAPIService;
-import com.example.api_memo.region.dto.LocationForm;
+import com.example.api_memo.region.dto.RegionDTO;
 import com.example.api_memo.region.entity.Point;
 import com.example.api_memo.region.entity.Region;
 import com.example.api_memo.region.repository.RegionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,25 +17,42 @@ public class RegionService {
     private final WeatherAPIService weatherAPIService;
     private final KakaoAPIService kakaoAPIService;
 
-    public void save(LocationForm locationForm) throws IOException {
+    public void save(RegionDTO regionDTO) {
 
-        double latitude = Double.parseDouble(locationForm.getLatitude());
-        double longitude = Double.parseDouble(locationForm.getLongitude());
+        double latitude = Double.parseDouble(regionDTO.getLatitude());
+        double longitude = Double.parseDouble(regionDTO.getLongitude());
 
         Point point = transfer(0, latitude, longitude);
 
         /**
          * 날짜 정보 사용할 상황에 적당히 수정해야한다.
          */
-        String[] weatherInfo = weatherAPIService.getApiWeather(point);
+        //날씨 정보는 다른 도메인에서 행해야 할것 같다.
+        //String[] weatherInfo = weatherAPIService.getApiWeather(point);
         String address = kakaoAPIService.loadLocation(longitude, latitude);
         Region region = new Region(latitude, longitude, point, address);
         regionRepository.save(region);
-        //동시에 Member 의 RegionID에 연결해줘
+        //동시에 Member 의 RegionID 에도 연결해줘
     }
 
-    public void update() {
+    /**
+     * 이미 지역 정보가 있으면 단순히 save가 아닌 update 해야 함
+     */
+    public void update(RegionDTO regionDTO) {
+        Optional<Region> regionOptional = regionRepository.findById(1L);
+        if (regionOptional == null) {
+            return;
+        }
+        Region region = regionOptional.get();
 
+        double latitude = Double.parseDouble(regionDTO.getLatitude());
+        double longitude = Double.parseDouble(regionDTO.getLongitude());
+        Point point = transfer(0, latitude, longitude);
+        String address = kakaoAPIService.loadLocation(longitude, latitude);
+
+        region.update(latitude, longitude, point, address);
+
+        regionRepository.save(region);
     }
 
     //위도, 경도를 x, y 좌표로 변환

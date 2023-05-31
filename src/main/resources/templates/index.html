@@ -16,7 +16,7 @@
             var latitude = position.coords.latitude;
             var longitude = position.coords.longitude;
 
-            var form = document.getElementById('locationForm');
+            var form = document.getElementById('regionDTO');
             form.latitude.value = latitude;
             form.longitude.value = longitude;
             form.submit();
@@ -25,7 +25,7 @@
 </head>
 <body onload="getLocation()">
 <h1>위치 정보 전송</h1>
-<form id="locationForm" th:action="@{/location}" method="post">
+<form id="regionDTO" th:action="@{/location}" method="post">
     <input type="hidden" name="latitude" th:value="${latitude}">
     <input type="hidden" name="longitude" th:value="${longitude}">
 </form>
