@@ -1,7 +1,9 @@
-package com.example.api_memo.weather.service;
+package com.example.api_memo.api.weather.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -12,23 +14,20 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+@Service
 public class WeatherService {
-    public static String[] getApiWeather(int xLan, int yLong) throws IOException {
 
-        LocalTime nowTime = LocalTime.now();
-        LocalDate nowDate = LocalDate.now();
-        LocalTime dateStandard = LocalTime.of(2, 10, 0);
+    @Value("${api.weather.key}")
+    private String REST_KEY;
 
-        String baseTime = "0200";
-        if (nowTime.isBefore(dateStandard)) {
-            nowDate = nowDate.minusDays(1);
-            baseTime = "2300";
-        }
-        String baseDate = nowDate.toString().replaceAll("-", "");
+    public String[] getApiWeather(int xLan, int yLong) throws IOException {
+        String[] bases = calcBaseDateAndTime();
+        String baseDate = bases[0];
+        String baseTime = bases[1];
 
 
         StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst"); /*URL*/
-        urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=nw48C%2FaNZoCKw7bqaAuDAWjZCRG661IMhPwZyRGJ%2FknF31pOZcz4GpCDb7tH9MDecDtyXVSXKidnBiLLcILTSA%3D%3D"); /*Service Key*/
+        urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + REST_KEY); /*Service Key*/
         urlBuilder.append("&" + URLEncoder.encode("pageNo", "UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /*페이지번호*/
         urlBuilder.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=" + URLEncoder.encode("200", "UTF-8")); /*한 페이지 결과 수*/
         urlBuilder.append("&" + URLEncoder.encode("dataType", "UTF-8") + "=" + URLEncoder.encode("JSON", "UTF-8")); /*요청자료형식(XML/JSON) Default: XML*/
@@ -40,7 +39,7 @@ public class WeatherService {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.setRequestProperty("Content-type", "application/json");
-        System.out.println("Response code: " + conn.getResponseCode());
+//        System.out.println("Response code: " + conn.getResponseCode());
         BufferedReader rd;
         if (conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
             rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -86,8 +85,23 @@ public class WeatherService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("최저 기온 : " + temperatureMinumum);
-        System.out.println("최고 기온 : " + temperatureMaximum);
+//        System.out.println("최저 기온 : " + temperatureMinumum);
+//        System.out.println("최고 기온 : " + temperatureMaximum);
         return new String[]{temperatureMinumum, temperatureMaximum};
+    }
+
+    private String[] calcBaseDateAndTime() {
+        LocalTime nowTime = LocalTime.now();
+        LocalDate nowDate = LocalDate.now();
+
+        LocalTime dateStandard = LocalTime.of(2, 10, 0);
+
+        String baseTime = "0200";
+        if (nowTime.isBefore(dateStandard)) {
+            nowDate = nowDate.minusDays(1);
+            baseTime = "2300";
+        }
+        String baseDate = nowDate.toString().replaceAll("-", "");
+        return new String[]{baseDate, baseTime};
     }
 }

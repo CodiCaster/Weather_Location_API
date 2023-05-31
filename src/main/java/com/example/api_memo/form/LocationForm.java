@@ -1,4 +1,4 @@
-package com.example.api_memo.entity;
+package com.example.api_memo.form;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

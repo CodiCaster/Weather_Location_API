@@ -1,4 +1,4 @@
-package com.example.api_memo.location.service;
+package com.example.api_memo.service;
 
 public class Convert {
 
