@@ -59,14 +59,14 @@ public class LocationController {
         longitude = Double.parseDouble(locationForm.getLongitude());
         convert = new Convert(latitude, longitude);
         convert.transfer(convert, 0);
-        xLat = 63;
-        yLon = 90;
-//        xLat = (int) convert.getxLat();
-//        yLon = (int) convert.getyLon();
+//        xLat = 63;
+//        yLon = 90;
+        xLat = (int) convert.getxLat();
+        yLon = (int) convert.getyLon();
         weatherInfo = WeatherService.getApiWeather(xLat, yLon);
 //        region = locationService.getRegion(xLat, yLon);
         //63, 90
-        //(latitude=35.8678275, longitude=127.1365699)
+//        (latitude=35.8678275, longitude=127.1365699)
         loadLocation();
         return "redirect:/result";
     }
