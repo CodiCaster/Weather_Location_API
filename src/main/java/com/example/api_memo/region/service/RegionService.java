@@ -1,53 +1,48 @@
-package com.example.api_memo.service;
+package com.example.api_memo.region.service;
 
-public class Convert {
+import com.example.api_memo.weather.service.WeatherAPIService;
+import com.example.api_memo.region.dto.LocationForm;
+import com.example.api_memo.region.entity.Point;
+import com.example.api_memo.region.entity.Region;
+import com.example.api_memo.region.repository.RegionRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-    private double lat; //gps로 반환받은 위도
-    private double lon; //gps로 반환받은 경도
+import java.io.IOException;
 
-    private double xLat; //x좌표로 변환된 위도
-    private double yLon; //y좌표로 변환된 경도
+@Service
+@RequiredArgsConstructor
+public class RegionService {
+    private final RegionRepository regionRepository;
+    private final WeatherAPIService weatherAPIService;
+    private final KakaoAPIService kakaoAPIService;
 
-    public Convert(double lat, double lon) {
-        this.lat = lat;
-        this.lon = lon;
+    public void save(LocationForm locationForm) throws IOException {
+
+        double latitude = Double.parseDouble(locationForm.getLatitude());
+        double longitude = Double.parseDouble(locationForm.getLongitude());
+
+        Point point = transfer(0, latitude, longitude);
+
+        /**
+         * 날짜 정보 사용할 상황에 적당히 수정해야한다.
+         */
+        String[] weatherInfo = weatherAPIService.getApiWeather(point);
+        String address = kakaoAPIService.loadLocation(longitude, latitude);
+        Region region = new Region(latitude, longitude, point, address);
+        regionRepository.save(region);
+        //동시에 Member 의 RegionID에 연결해줘
     }
 
+    public void update() {
 
-    public double getLat() {
-        return lat;
     }
 
-    public double getLon() {
-        return lon;
-    }
+    //위도, 경도를 x, y 좌표로 변환
+    public Point transfer(int mode, double lat, double lon) {
+        double xLat = 0;
+        double yLon = 0;
 
-    public double getxLat() {
-        return xLat;
-    }
-
-    public double getyLon() {
-        return yLon;
-    }
-
-    public void setLat(double lat) {
-        this.lat = lat;
-    }
-
-    public void setLon(double lon) {
-        this.lon = lon;
-    }
-
-    public void setxLat(double xLat) {
-        this.xLat = xLat;
-    }
-
-    public void setyLon(double yLon) {
-        this.yLon = yLon;
-    }
-
-    //x,y좌표로 변환해주는것
-    public void transfer(Convert gpt, int mode) {
 
         double RE = 6371.00877; // 지구 반경(km)
         double GRID = 5.0; // 격자 간격(km)
@@ -82,23 +77,23 @@ public class Convert {
         if (mode == 0) {
 //            rs.lat = lat_X; //gps 좌표 위도
 //            rs.lng = lng_Y; //gps 좌표 경도
-            double ra = Math.tan(Math.PI * 0.25 + (gpt.getLat()) * DEGRAD * 0.5);
+            double ra = Math.tan(Math.PI * 0.25 + (lat) * DEGRAD * 0.5);
             ra = re * sf / Math.pow(ra, sn);
-            double theta = gpt.getLon() * DEGRAD - olon;
+            double theta = lon * DEGRAD - olon;
             if (theta > Math.PI) theta -= 2.0 * Math.PI;
             if (theta < -Math.PI) theta += 2.0 * Math.PI;
             theta *= sn;
             double x = Math.floor(ra * Math.sin(theta) + XO + 0.5);
             double y = Math.floor(ro - ra * Math.cos(theta) + YO + 0.5);
-            gpt.setxLat(x);
-            gpt.setyLon(y);
+            xLat = x;
+            yLon = y;
 //            rs.x = Math.floor(ra * Math.sin(theta) + XO + 0.5);
 //            rs.y = Math.floor(ro - ra * Math.cos(theta) + YO + 0.5);
         } else {
 //            rs.x = lat_X; //기존의 x좌표
 //            rs.y = lng_Y; //기존의 경도
-            double xlat = gpt.getxLat();
-            double ylon = gpt.getyLon();
+            double xlat = xLat;
+            double ylon = yLon;
             double xn = xlat - XO;
             double yn = ro - ylon + YO;
             double ra = Math.sqrt(xn * xn + yn * yn);
@@ -122,8 +117,9 @@ public class Convert {
             double alon = theta / sn + olon;
 //            rs.lat = alat * RADDEG; //gps 좌표 위도
 //            rs.lng = alon * RADDEG; //gps 좌표 경도
-            gpt.setLat(alat * RADDEG);
-            gpt.setLon(alon * RADDEG);
+            lat = alat * RADDEG;
+            lon = alon * RADDEG;
         }
+        return new Point(xLat, yLon);
     }
 }

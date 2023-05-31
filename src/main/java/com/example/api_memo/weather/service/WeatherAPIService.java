@@ -1,5 +1,6 @@
-package com.example.api_memo.api.weather.service;
+package com.example.api_memo.weather.service;
 
+import com.example.api_memo.region.entity.Point;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +23,16 @@ public class WeatherAPIService {
     private String temperatureMinumum;
     private String temperatureMaximum;
 
-    public String[] getApiWeather(int xLan, int yLon) throws IOException {
+    /**
+     *
+     * @param point
+     * @return weatherInfo
+     * @throws IOException
+     */
+    public String[] getApiWeather(Point point) throws IOException {
+        int xLan = point.getX();
+        int yLon = point.getY();
+
         String[] bases = calcBaseDateAndTime();
         String baseDate = bases[0];
         String baseTime = bases[1];
@@ -86,6 +96,10 @@ public class WeatherAPIService {
         return new String[]{temperatureMinumum, temperatureMaximum};
     }
 
+    /**
+     *
+     * @return baseDateAndTime
+     */
     private String[] calcBaseDateAndTime() {
         LocalTime nowTime = LocalTime.now();
         LocalDate nowDate = LocalDate.now();

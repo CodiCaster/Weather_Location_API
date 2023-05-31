@@ -1,9 +1,8 @@
-package com.example.api_memo.api.kakao.service;
+package com.example.api_memo.region.service;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -17,6 +16,11 @@ public class KakaoAPIService {
     @Value("${api.kakao.key}")
     private String REST_KEY;
 
+    /**
+     * @param longitude
+     * @param latitude
+     * @return address
+     */
     public String loadLocation(double longitude, double latitude) {
         String regionDetail = "";
         String urlString = "https://dapi.kakao.com/v2/local/geo/coord2regioncode?x=" + longitude + "&y=" + latitude;
