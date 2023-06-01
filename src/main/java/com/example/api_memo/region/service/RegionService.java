@@ -1,5 +1,6 @@
 package com.example.api_memo.region.service;
 
+import com.example.api_memo.member.entity.Member;
 import com.example.api_memo.weather.service.WeatherAPIService;
 import com.example.api_memo.region.dto.LocationDTO;
 import com.example.api_memo.region.entity.Point;
@@ -17,11 +18,11 @@ public class RegionService {
     private final WeatherAPIService weatherAPIService;
     private final KakaoAPIService kakaoAPIService;
 
-    public void save(LocationDTO locationDTO) {
+    public void save(LocationDTO locationDTO, Member member) {
+        if (member.getId() == 1);
 
         double latitude = Double.parseDouble(locationDTO.getLatitude());
         double longitude = Double.parseDouble(locationDTO.getLongitude());
-
         Point point = transferLocationToPoint(0, latitude, longitude);
 
         /**

@@ -1,5 +1,6 @@
 package com.example.api_memo.region.controller;
 
+import com.example.api_memo.member.entity.Member;
 import com.example.api_memo.region.dto.LocationDTO;
 import com.example.api_memo.region.service.RegionService;
 import lombok.AllArgsConstructor;
@@ -25,11 +26,11 @@ public class RegionController {
 
     //위치 정보 갱신 버튼을 누르면 위치 갱신
     @PostMapping("/location")
-    public String save(LocationDTO locationDTO) {
+    public String save(LocationDTO locationDTO, Member member) {
         if (locationDTO.getLatitude().isEmpty()) {
             return "여기는 에러";
         }
-        regionService.save(locationDTO);
+        regionService.save(locationDTO, member);
 
         return "result.html";
     }
