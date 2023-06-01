@@ -1,12 +1,10 @@
 package com.example.api_memo.region.controller;
 
-import com.example.api_memo.region.dto.RegionDTO;
+import com.example.api_memo.region.dto.LocationDTO;
 import com.example.api_memo.region.service.RegionService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
 
 @Controller
 @AllArgsConstructor
@@ -27,11 +25,11 @@ public class RegionController {
 
     //위치 정보 갱신 버튼을 누르면 위치 갱신
     @PostMapping("/location")
-    public String getLocation(RegionDTO regionDTO) throws IOException {
-        if (regionDTO.getLatitude().isEmpty()) {
+    public String save(LocationDTO locationDTO) {
+        if (locationDTO.getLatitude().isEmpty()) {
             return "여기는 에러";
         }
-        regionService.save(regionDTO);
+        regionService.save(locationDTO);
 
         return "result.html";
     }

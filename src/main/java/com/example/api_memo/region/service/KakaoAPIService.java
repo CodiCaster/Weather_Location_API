@@ -21,7 +21,7 @@ public class KakaoAPIService {
      * @param latitude
      * @return address
      */
-    public String loadLocation(double longitude, double latitude) {
+    public String loadRegion(double longitude, double latitude) {
         String regionDetail = "";
         String urlString = "https://dapi.kakao.com/v2/local/geo/coord2regioncode?x=" + longitude + "&y=" + latitude;
 
