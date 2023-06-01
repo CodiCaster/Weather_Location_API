@@ -12,6 +12,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -20,14 +21,11 @@ public class WeatherAPIService {
 
     @Value("${api.weather.key}")
     private String REST_KEY;
-    private String temperatureMinumum;
+    private String temperatureMinimum;
     private String temperatureMaximum;
 
     /**
-     *
-     * @param point
      * @return weatherInfo
-     * @throws IOException
      */
     public String[] getApiWeather(Point point) throws IOException {
         int xLan = point.getX();
@@ -37,16 +35,16 @@ public class WeatherAPIService {
         String baseDate = bases[0];
         String baseTime = bases[1];
 
-        StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst"); /*URL*/
-        urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + REST_KEY); /*Service Key*/
-        urlBuilder.append("&" + URLEncoder.encode("pageNo", "UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /*페이지번호*/
-        urlBuilder.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=" + URLEncoder.encode("200", "UTF-8")); /*한 페이지 결과 수*/
-        urlBuilder.append("&" + URLEncoder.encode("dataType", "UTF-8") + "=" + URLEncoder.encode("JSON", "UTF-8")); /*요청자료형식(XML/JSON) Default: XML*/
-        urlBuilder.append("&" + URLEncoder.encode("base_date", "UTF-8") + "=" + URLEncoder.encode(baseDate, "UTF-8")); /*‘XX년 X월 XX일발표*/
-        urlBuilder.append("&" + URLEncoder.encode("base_time", "UTF-8") + "=" + URLEncoder.encode(baseTime, "UTF-8")); /*XX시 발표*/
-        urlBuilder.append("&" + URLEncoder.encode("nx", "UTF-8") + "=" + URLEncoder.encode("" + xLan, "UTF-8")); /*예보지점의 X 좌표값*/
-        urlBuilder.append("&" + URLEncoder.encode("ny", "UTF-8") + "=" + URLEncoder.encode("" + yLon, "UTF-8")); /*예보지점의 Y 좌표값*/
-        URL url = new URL(urlBuilder.toString());
+        /*URL*/
+        String urlString = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst" + "?" + URLEncoder.encode("serviceKey", StandardCharsets.UTF_8) + "=" + REST_KEY + /*Service Key*/
+                "&" + URLEncoder.encode("pageNo", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("1", StandardCharsets.UTF_8) + /*페이지번호*/
+                "&" + URLEncoder.encode("numOfRows", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("200", StandardCharsets.UTF_8) + /*한 페이지 결과 수*/
+                "&" + URLEncoder.encode("dataType", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("JSON", StandardCharsets.UTF_8) + /*요청자료형식(XML/JSON) Default: XML*/
+                "&" + URLEncoder.encode("base_date", StandardCharsets.UTF_8) + "=" + URLEncoder.encode(baseDate, StandardCharsets.UTF_8) + /*‘XX년 X월 XX일 발표*/
+                "&" + URLEncoder.encode("base_time", StandardCharsets.UTF_8) + "=" + URLEncoder.encode(baseTime, StandardCharsets.UTF_8) + /*XX시 발표*/
+                "&" + URLEncoder.encode("nx", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("" + xLan, StandardCharsets.UTF_8) + /*예보지점의 X 좌표값*/
+                "&" + URLEncoder.encode("ny", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("" + yLon, StandardCharsets.UTF_8); /*예보지점의 Y 좌표값*/
+        URL url = new URL(urlString);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.setRequestProperty("Content-type", "application/json");
@@ -80,7 +78,7 @@ public class WeatherAPIService {
                 for (JsonNode node : itemNode) {
                     String category = node.path("category").asText();
                     if (category.equals("TMN")) {
-                        temperatureMinumum = node.path("fcstValue").asText();
+                        temperatureMinimum = node.path("fcstValue").asText();
                     }
                     if (category.equals("TMX")) {
                         temperatureMaximum = node.path("fcstValue").asText();
@@ -93,11 +91,10 @@ public class WeatherAPIService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new String[]{temperatureMinumum, temperatureMaximum};
+        return new String[]{temperatureMinimum, temperatureMaximum};
     }
 
     /**
-     *
      * @return baseDateAndTime
      */
     private String[] calcBaseDateAndTime() {

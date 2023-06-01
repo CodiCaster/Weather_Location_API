@@ -16,12 +16,7 @@ public class KakaoAPIService {
     @Value("${api.kakao.key}")
     private String REST_KEY;
 
-    /**
-     * @param longitude
-     * @param latitude
-     * @return address
-     */
-    public String loadRegion(double longitude, double latitude) {
+    public String loadRegionFromKakao(double longitude, double latitude) {
         String regionDetail = "";
         String urlString = "https://dapi.kakao.com/v2/local/geo/coord2regioncode?x=" + longitude + "&y=" + latitude;
 

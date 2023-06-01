@@ -16,10 +16,10 @@ public class Region {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    private Double latitude; //gps로 반환받은 위도
-    private Double longitude; //gps로 반환받은 경도
-    private Integer pointX; //x좌표로 변환된 위도
-    private Integer pointY; //y좌표로 변환된 경도
+    private Double latitude; //gps 로 반환받은 위도
+    private Double longitude; //gps 로 반환받은 경도
+    private Integer pointX; //x 좌표로 변환된 위도
+    private Integer pointY; //y 좌표로 변환된 경도
     private String address; //주소 (~동 까지)
 
     public Region(Double latitude, Double longitude, Point point, String address) {

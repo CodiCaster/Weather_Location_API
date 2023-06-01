@@ -28,11 +28,11 @@ public class RegionController {
     @PostMapping("/location")
     public String save(LocationDTO locationDTO, Member member) {
         if (locationDTO.getLatitude().isEmpty()) {
-            return "여기는 에러";
+            return "error";
         }
         regionService.save(locationDTO, member);
 
-        return "result.html";
+        return "result";
     }
 
 
